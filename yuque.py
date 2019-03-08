@@ -1,3 +1,5 @@
+# coding = utf-8
+
 import json
 
 import requests
@@ -22,6 +24,8 @@ GROUP_DELETE_PATH = '/groups/'    #删除组织
 GROUP_USERS_PATH = '/groups/'    #获取组织成员信息  注：需在最后加用户id/users或login/users
 GROUP_UPDATE_USER_PATH = '/groups/'    #增加或更新组织成员  注：需在最后加用户group_login//users/login或:group_id/users/login
 GROUP_DELETE_USER_PATH = '/groups/'    #删除组织成员  注：需在最后加用户group_login//users/login或:group_id/users/login
+
+
 
 # 请求头
 HEADER = {
@@ -85,7 +89,23 @@ class User():
     
 
 class Group():
-    """获取组织信息"""
+    """获取组织信息
+    
+    :param token: 用户token
+    :param id: 用户的 login 或 id
+    :param base_path: 基本路径
+    :param group_groups_path: 获取某个用户的加入的组织列表路径
+    :param group_groups_public_path: 获取公开组织列表路径
+    :param group_create_path: 创建组织路径
+    :param group_detail_path: 获取单个组织的详细信息路径
+    :param group_update_path: 更新单个组织的详细信息路径
+    :param group_delete_path: 删除组织路径
+    :param group_users_path: 获取组织成员信息路径
+    :param group_update_user_path: 增加或更新组织成员路径
+    :param group_delete_user_path: 删除组织成员路径
+    :param header: 请求头
+    """
+
     def __init__(self,
                 token=None,
                 id=None,
@@ -115,17 +135,25 @@ class Group():
         self.header = header
 
     def groups(self):
+        """获取某个用户的加入的组织列表"""
         self.header['X-Auth-Token'] = self.token
         url = self.base_path + self.group_groups_path + self.id + '/groups'
         r = requests.get(url,headers=self.header)
         return r.json()
 
     def groups_public(self):
+        """获取公开组织列表"""
         url = self.base_path + self.group_groups_public_path
         r = requests.get(url,headers=self.header)
         return r.json()
 
     def create(self,name,login,description=None):
+        """创建 Group
+
+        :param name: 组织名称
+        :param login: login
+        :param description: 介绍
+        """
         params = {
             'name': name,
             'login': login,
@@ -137,6 +165,11 @@ class Group():
         return r.json()
 
     def detail(self,groupid):
+        """获取单个组织的详细信息
+        
+        :param groupid: 组织的 login 或 id
+        """
+
         url = self.base_path + self.group_detail_path + groupid
         r = requests.get(url,headers=self.header)
         return r.json()
