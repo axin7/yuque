@@ -37,7 +37,13 @@ HEADER = {
 class User():
     """获取用户信息
     
-    :param 
+    :param token: 用户token
+    :param id: 用户的 login 或 id
+    :param base_path: 基本路径
+    :param user_info_path: 获取单个用户信息
+    :param user_info_auth_path: 获取认证的用户的个人信息
+    :param user_docs_path: 获取用户创建的文档
+    :param header: 请求头
     """
 
     def __init__(self,
@@ -57,17 +63,25 @@ class User():
         self.header = header
 
     def info(self):
+        """获取单个用户信息"""
         url = BASE_PATH + USER_INFO_PATH + self.id
         r = requests.get(url,headers = self.header)
         return r.json()
             
     def info_auth(self):
+        """获取认证的用户的个人信息"""
         self.header['X-Auth-Token'] = self.token
         url = BASE_PATH + USER_INFO_AUTH_PATH
         r = requests.get(url,headers=self.header)
         return r.json()
 
     def docs(self,keywords=None,offset=None):
+        """获取我创建的文档
+        
+        :param keywords: 文档标题模糊搜索的关键词
+        :param offset: 用于分页，效果类似 MySQL 的 limit offset，一页 20 条
+        """
+
         self.header['X-Auth-Token'] = self.token
         params = {
             'q': keywords,
@@ -78,6 +92,11 @@ class User():
         return r.json()
 
     def recent_updated(self,type,offset=None):
+        """获取我最近参与的文档/知识库
+
+        :param type: Doc - 文档, Book - 知识库
+        :param offset: 用于分页，效果类似 MySQL 的 limit offset，一页 20 条
+        """
         params = {
             'type': type,
             'offset': offset
