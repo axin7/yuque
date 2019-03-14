@@ -1,10 +1,11 @@
+#!/usr/bin/env python
 # coding=UTF-8
-"""
+'''
 @Author: axin7
 @LastEditors: axin7
 @Date: 2019-03-10 15:41:50
-@LastEditTime: 2019-03-12 20:11:56
-"""
+@LastEditTime: 2019-03-14 20:12:40
+'''
 
 import json
 
@@ -15,7 +16,7 @@ import requests
 BASE_PATH = 'https://www.yuque.com/api/v2'    
 
 # 用户路径
-USER_INFO_PATH = '/users/'      # 获取单个用户信息   注：需在最后加 用户id或login       【无需认证】
+USER_INFO_PATH = '/users/'      # 获取单个用户信息   注：需在最后加 用户id或login      【无需认证】
 USER_INFO_AUTH_PATH = '/user'   # 获取认证的用户的个人信息                           【需要认证】
 USER_DOCS_PATH = '/user/docs'   # 获取用户创建的文档                                【需要认证】
 USER_RENCENT_UPDATED_PATH = '/user/recent-updated'     # 获取最近参与的文档/知识库   【需要认证】
@@ -47,122 +48,6 @@ HEADER = {
     'Content-Type' : 'application/x-www-form-urlencoded',
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36'
 }
-
-class Repo():
-    """获取仓库信息"""
-
-    def __init__(self,
-                token=None,
-                base_path=BASE_PATH, 
-                repo_repos_user_path=REPO_REPOS_USER_PATH,
-                repo_repos_group_path=REPO_REPOS_GROUP_PATH,
-                repo_create_user_path=REPO_CREATE_USER_PATH,
-                repo_create_group_path=REPO_CREATE_GROUP_PATH,
-                repo_detail_path=REPO_DETAIL_PATH,
-                repo_update_path=REPO_UPDATE_PATH,
-                repo_delete_path=REPO_DELETE_PATH,
-                repo_toc_path=REPO_TOC_PATH,
-                repo_search_path=REPO_SEARCH_PATH,
-                header=HEADER):
-        self.token = token
-        self.base_path = base_path
-        self.repo_repos_user_path = repo_repos_user_path
-        self.repo_repos_group_path = repo_repos_group_path
-        self.repo_create_user_path = repo_create_user_path
-        self.repo_create_group_path = repo_create_group_path
-        self.repo_detail_path = repo_detail_path
-        self.repo_update_path = repo_update_path
-        self.repo_delete_path = repo_delete_path
-        self.repo_toc_path = repo_toc_path
-        self.repo_search_path = repo_search_path
-        self.header = header
-
-    def repos_user(self,id):
-        """获取某个用户的仓库列表"""
-        url = self.base_path + self.repo_repos_user_path + id + '/repos'
-        r = requests.get(url,headers=self.header)
-        return r.json()
-
-    def repos_group(self,groupid):
-        """获取某个组织的仓库列表"""
-        url = self.base_path + self.repo_repos_group_path + groupid +'/repos'
-        r = requests.get(url,headers=self.header)
-        return r.json()
-
-    def create(self,id,name=None,slug=None,description=None,public=None,type=None):
-        """往自己下面创建仓库"""
-        self.header['X-Auth-Token'] = self.token
-        params = {
-            'name': name,
-            'slug': slug,
-            'description': description,
-            'public': int(public),
-            'type': type
-        }
-        url = self.base_path + self.repo_create_user_path + id + '/repos'
-        r = requests.post(url,headers=self.header,params=params)
-        return r.json()
-
-    def create_group(self,groupid=None,name=None,slug=None,description=None,public=None,type=None):
-        """往组织创建仓库"""
-        self.header['X-Auth-Token'] = self.token
-        params = {
-            'name': name,
-            'slug': slug,
-            'description': description,
-            'public': int(public),
-            'type': type
-        }
-        url = self.base_path + self.repo_create_group_path + groupid + '/repos'
-        r = requests.post(url,headers=self.header,params=params)
-        return r.json()
-
-    def detail(self,id,type):
-        """获取仓库详情"""
-        params = {
-            'type': type
-        }
-        url = self.base_path + self.repo_detail_path + id
-        r = requests.get(url,headers=self.header,params=params)
-        return r.json()
-
-    def update(self,id=None,name=None,slug=None,toc=None,description=None,public=None):
-        """更新仓库信息"""
-        self.header['X-Auth-Token'] = self.token
-        params = {
-            'name': name,
-            'slug': slug,
-            'toc': toc,
-            'description': description,
-            'public': public
-        }
-        url = self.base_path + self.repo_update_path + id
-        r = requests.put(url,headers=self.header,params=params)
-        return r.json()
-
-    def delete(self,id):
-        """删除仓库"""
-        self.header['X-Auth-Token'] = self.token
-        url = self.base_path + self.repo_delete_path + id
-        r = requests.delete(url,headers=self.header)
-        return r.json()
-
-    def toc(self,id):
-        """获取一个仓库的目录结构"""
-        self.header['X-Auth-Token'] = self.token
-        url = self.base_path + self.repo_toc_path + id
-        r = requests.get(url,headers=self.header)
-        return r.json()
-
-    def search(self,keywords=None,type=None):
-        self.header['X-Auth-Token'] = self.token
-        params = {
-            'q': keywords,
-            'type': type
-        }
-        url = self.base_path + self.repo_search_path
-        r = requests.get(url,headers=self.header,params=params)
-        return r.json()
 
 
 class User():
@@ -225,7 +110,7 @@ class User():
     def recent_updated(self,type,offset=None):
         """获取我最近参与的文档/知识库
 
-        :param type: Doc - 文档, Book - 知识库
+        :param type: 类型，Book - 文档，Design - 画板
         :param offset: 用于分页，效果类似 MySQL 的 limit offset，一页 20 条
         """
         params = {
@@ -317,7 +202,7 @@ class Group():
     def detail(self,groupid):
         """获取单个组织的详细信息
         
-        :param groupid: 组织的 login 或 id
+        :param groupid: 组织的login或id
         """
 
         url = self.base_path + self.group_detail_path + groupid
@@ -327,7 +212,7 @@ class Group():
     def update(self,groupid,name=None,login=None,description=None):
         """更新单个组织的详细信息
         
-        :param groupid: 组织的 login 或 id
+        :param groupid: 组织的login或id
         :param name: 组织名称
         :param login: login
         :param description: 介绍
@@ -345,7 +230,7 @@ class Group():
     def delete(self,groupid):
         """删除组织
 
-        :param groupid: 组织的 login 或 id
+        :param groupid: 组织的login或id
         """
         self.header['X-Auth-Token'] = self.token
         url = self.base_path + self.group_delete_path + groupid
@@ -355,7 +240,7 @@ class Group():
     def users(self,groupid):
         """获取组织成员信息
 
-        :param groupid: 组织的 login 或 id
+        :param groupid: 组织的login或id
         """
         self.header['X-Auth-Token'] = self.token
         url = self.base_path + self.group_users_path + groupid + '/users'
@@ -365,7 +250,7 @@ class Group():
     def update_user(self,groupid,login,role):
         """增加或更新组织成员
         
-        :param groupid: 组织的 login 或 id
+        :param groupid: 组织的login或id
         :param login: 用户的login
         :param role: 0 - 管理员, 1 - 普通成员
         """
@@ -380,7 +265,7 @@ class Group():
     def delete_user(self,groupid,login):
         """删除组织成员
         
-        :param groupid: 组织的 login 或 id
+        :param groupid: 组织的login或id
         :param login: 用户的login
         """
         self.header['X-Auth-Token'] = self.token
@@ -388,3 +273,176 @@ class Group():
         r = requests.delete(url,headers=self.header)
         return r.json()
 
+class Repo():
+    """获取仓库信息
+    
+    :params token: 用户token
+    :params base_path: 基本路径
+    :params repo_repos_user_path: 获取某个用户的仓库列表
+    :params repo_repos_group_path: 获取某个组织的仓库列表
+    :params repo_create_user_path: 往自己下面创建仓库
+    :params repo_create_group_path: 往组织创建仓库
+    :params repo_detail_path: 获取仓库详情
+    :params repo_update_path: 更新仓库信息
+    :params repo_delete_path: 删除仓库
+    :params repo_toc_path: 获取一个仓库的目录结构
+    :params repo_search_path: 基于关键字搜索仓库
+    """
+
+    def __init__(self,
+                token=None,
+                base_path=BASE_PATH, 
+                repo_repos_user_path=REPO_REPOS_USER_PATH,
+                repo_repos_group_path=REPO_REPOS_GROUP_PATH,
+                repo_create_user_path=REPO_CREATE_USER_PATH,
+                repo_create_group_path=REPO_CREATE_GROUP_PATH,
+                repo_detail_path=REPO_DETAIL_PATH,
+                repo_update_path=REPO_UPDATE_PATH,
+                repo_delete_path=REPO_DELETE_PATH,
+                repo_toc_path=REPO_TOC_PATH,
+                repo_search_path=REPO_SEARCH_PATH,
+                header=HEADER):
+        self.token = token
+        self.base_path = base_path
+        self.repo_repos_user_path = repo_repos_user_path
+        self.repo_repos_group_path = repo_repos_group_path
+        self.repo_create_user_path = repo_create_user_path
+        self.repo_create_group_path = repo_create_group_path
+        self.repo_detail_path = repo_detail_path
+        self.repo_update_path = repo_update_path
+        self.repo_delete_path = repo_delete_path
+        self.repo_toc_path = repo_toc_path
+        self.repo_search_path = repo_search_path
+        self.header = header
+
+    def repos_user(self,id):
+        """获取某个用户的仓库列表
+        
+        :params id: 用户的login或id
+        """
+        url = self.base_path + self.repo_repos_user_path + id + '/repos'
+        r = requests.get(url,headers=self.header)
+        return r.json()
+
+    def repos_group(self,groupid):
+        """获取某个组织的仓库列表
+        
+        :params groupid: 组织的login或id
+        """
+        url = self.base_path + self.repo_repos_group_path + groupid +'/repos'
+        r = requests.get(url,headers=self.header)
+        return r.json()
+
+    def create(self,id,name=None,slug=None,description=None,public=None,type=None):
+        """往自己下面创建仓库
+        
+        :params id: 用户的login或id
+        :params name: 仓库名称
+        :params slug: slug
+        :params description: 说明
+        :params public: 0 私密, 1 内网公开, 2 全网公开
+        :params type: 类型，Book - 文档，Design - 画板
+        """
+        self.header['X-Auth-Token'] = self.token
+        params = {
+            'name': name,
+            'slug': slug,
+            'description': description,
+            'public': int(public),
+            'type': type
+        }
+        url = self.base_path + self.repo_create_user_path + id + '/repos'
+        r = requests.post(url,headers=self.header,params=params)
+        return r.json()
+
+    def create_group(self,groupid=None,name=None,slug=None,description=None,public=None,type=None):
+        """往组织创建仓库
+        
+        :params groupid: 组织的login或id
+        :params name: 仓库名称
+        :params slug: slug
+        :params description: 说明
+        :params public: 0 私密, 1 内网公开, 2 全网公开
+        :params type: 类型，Book - 文档，Design - 画板
+        """
+        self.header['X-Auth-Token'] = self.token
+        params = {
+            'name': name,
+            'slug': slug,
+            'description': description,
+            'public': int(public),
+            'type': type
+        }
+        url = self.base_path + self.repo_create_group_path + groupid + '/repos'
+        r = requests.post(url,headers=self.header,params=params)
+        return r.json()
+
+    def detail(self,id,type):
+        """获取仓库详情
+        
+        :params id: 仓库的namespace或id
+        :params type: 类型，Book - 文档，Design - 画板
+        """
+        params = {
+            'type': type
+        }
+        url = self.base_path + self.repo_detail_path + id
+        r = requests.get(url,headers=self.header,params=params)
+        return r.json()
+
+    def update(self,id=None,name=None,slug=None,toc=None,description=None,public=None):
+        """更新仓库信息
+        
+        :params id: 仓库的namespace或id
+        :params name: 仓库名称
+        :params slug: slug
+        :params toc: 更新文档仓库的目录信息
+        :params description: 说明
+        :params public: 0 私密, 1 内网公开, 2 全网公开
+        """
+        self.header['X-Auth-Token'] = self.token
+        params = {
+            'name': name,
+            'slug': slug,
+            'toc': toc,
+            'description': description,
+            'public': public
+        }
+        url = self.base_path + self.repo_update_path + id
+        r = requests.put(url,headers=self.header,params=params)
+        return r.json()
+
+    def delete(self,id):
+        """删除仓库
+        
+        :params id: 仓库的namespace或id
+        """
+        self.header['X-Auth-Token'] = self.token
+        url = self.base_path + self.repo_delete_path + id
+        r = requests.delete(url,headers=self.header)
+        return r.json()
+
+    def toc(self,id):
+        """获取一个仓库的目录结构
+        
+        :params id: 仓库的namespace或id
+        """
+        self.header['X-Auth-Token'] = self.token
+        url = self.base_path + self.repo_toc_path + id + '/toc'
+        r = requests.get(url,headers=self.header)
+        return r.json()
+
+    def search(self,keywords=None,type=None):
+        """基于关键字搜索仓库
+        
+        :params: keywords: :仓库模糊搜索的关键词
+        :params: type: 类型，Book - 文档，Design - 画板
+        """
+        self.header['X-Auth-Token'] = self.token
+        params = {
+            'q': keywords,
+            'type': type
+        }
+        url = self.base_path + self.repo_search_path
+        r = requests.get(url,headers=self.header,params=params)
+        return r.json()
