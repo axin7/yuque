@@ -1,13 +1,6 @@
-#!/usr/bin/env python
-# coding=UTF-8
-'''
-@Author: axin7
-@LastEditors: axin7
-@Date: 2019-03-10 15:41:50
-@LastEditTime: 2019-03-14 20:12:40
-'''
+# -*- coding: utf-8 -*-
 
-import json
+from functools import partial
 
 import requests
 
@@ -16,10 +9,10 @@ import requests
 BASE_PATH = 'https://www.yuque.com/api/v2'    
 
 # 用户路径
-USER_INFO_PATH = '/users/'      # 获取单个用户信息   注：需在最后加 用户id或login      【无需认证】
-USER_INFO_AUTH_PATH = '/user'   # 获取认证的用户的个人信息                           【需要认证】
-USER_DOCS_PATH = '/user/docs'   # 获取用户创建的文档                                【需要认证】
-USER_RENCENT_UPDATED_PATH = '/user/recent-updated'     # 获取最近参与的文档/知识库   【需要认证】
+USER_INFO_PATH = '/users/'      # 获取单个用户信息   注：需在最后加 用户id或login      
+USER_INFO_AUTH_PATH = '/user'   # 获取认证的用户的个人信息                           
+USER_DOCS_PATH = '/user/docs'   # 获取用户创建的文档                                
+USER_RENCENT_UPDATED_PATH = '/user/recent-updated'     # 获取最近参与的文档/知识库   
 
 # 组织路径
 GROUP_GROUPS_PATH = '/users/'     # 获取某个用户的加入的组织列表  注：需在最后加 用户id/groups或login/groups
@@ -49,46 +42,36 @@ HEADER = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36'
 }
 
+get = partial(requests.get,headers=HEADER)
+post = partial(requests.post,headers=HEADER)
+put = partial(requests.put,headers=HEADER)
+delete = partial(requests.delete,headers=HEADER)
+
 
 class User():
     """获取用户信息
     
     :param token: 用户token
     :param id: 用户的 login 或 id
-    :param base_path: 基本路径
-    :param user_info_path: 获取单个用户信息
-    :param user_info_auth_path: 获取认证的用户的个人信息
-    :param user_docs_path: 获取用户创建的文档
-    :param header: 请求头
     """
 
     def __init__(self,
                 token=None,
-                id=None,
-                base_path=BASE_PATH, 
-                user_info_path=USER_INFO_PATH,
-                user_info_auth_path=USER_INFO_AUTH_PATH,
-                user_docs_path=USER_DOCS_PATH,
-                header=HEADER):
-        self.token = token
+                id=None):
+        HEADER['X-Auth-Token'] = token
         self.id = id
-        self.base_path = base_path
-        self.user_info_path = user_info_path
-        self.user_info_auth_path = user_info_auth_path
-        self.user_docs_path = user_docs_path
-        self.header = header
+        self.header = HEADER
 
     def info(self):
         """获取单个用户信息"""
         url = BASE_PATH + USER_INFO_PATH + self.id
-        r = requests.get(url,headers = self.header)
+        r = get(url=url,headers = self.header)
         return r.json()
             
     def info_auth(self):
         """获取认证的用户的个人信息"""
-        self.header['X-Auth-Token'] = self.token
         url = BASE_PATH + USER_INFO_AUTH_PATH
-        r = requests.get(url,headers=self.header)
+        r = get(url=url,headers=self.header)
         return r.json()
 
     def docs(self,keywords=None,offset=None):
@@ -98,13 +81,12 @@ class User():
         :param offset: 用于分页，效果类似 MySQL 的 limit offset，一页 20 条
         """
 
-        self.header['X-Auth-Token'] = self.token
         params = {
             'q': keywords,
             'offset': offset
         }
         url = BASE_PATH + USER_DOCS_PATH
-        r = requests.get(url,headers=self.header,params=params)
+        r = get(url=url,headers=self.header,params=params)
         return r.json()
 
     def recent_updated(self,type,offset=None):
@@ -117,9 +99,8 @@ class User():
             'type': type,
             'offset': offset
         }
-        self.header['X-Auth-Token'] = self.token
         url = BASE_PATH + USER_RENCENT_UPDATED_PATH
-        r = requests.get(url, headers=self.header,params=params)
+        r = get(url=url, headers=self.header,params=params)
         return r.json()
     
 
@@ -128,58 +109,25 @@ class Group():
     
     :param token: 用户token
     :param id: 用户的 login 或 id
-    :param base_path: 基本路径
-    :param group_groups_path: 获取某个用户的加入的组织列表路径
-    :param group_groups_public_path: 获取公开组织列表路径
-    :param group_create_path: 创建组织路径
-    :param group_detail_path: 获取单个组织的详细信息路径
-    :param group_update_path: 更新单个组织的详细信息路径
-    :param group_delete_path: 删除组织路径
-    :param group_users_path: 获取组织成员信息路径
-    :param group_update_user_path: 增加或更新组织成员路径
-    :param group_delete_user_path: 删除组织成员路径
-    :param header: 请求头
     """
 
     def __init__(self,
                 token=None,
-                id=None,
-                base_path=BASE_PATH, 
-                group_groups_path=GROUP_GROUPS_PATH,
-                group_groups_public_path=GROUP_GROUPS_PUBLIC_PATH,
-                group_create_path=GROUP_CREATE_PATH,
-                group_detail_path=GROUP_DETAIL_PATH,
-                group_update_path=GROUP_UPDATE_PATH,
-                group_delete_path=GROUP_DELETE_PATH,
-                group_users_path=GROUP_USERS_PATH,
-                group_update_user_path=GROUP_UPDATE_USER_PATH,
-                group_delete_user_path=GROUP_DELETE_USER_PATH,
-                header=HEADER):
-        self.token = token
+                id=None):
+        HEADER['X-Auth-Token'] = token
         self.id = id
-        self.base_path = base_path
-        self.group_groups_path = group_groups_path
-        self.group_groups_public_path = group_groups_public_path
-        self.group_create_path = group_create_path
-        self.group_detail_path = group_detail_path
-        self.group_update_path = group_update_path
-        self.group_delete_path = group_delete_path
-        self.group_users_path = group_users_path
-        self.group_update_user_path = group_update_user_path
-        self.group_delete_user_path = group_delete_user_path
-        self.header = header
+        self.header = HEADER
 
     def groups(self):
         """获取某个用户的加入的组织列表"""
-        self.header['X-Auth-Token'] = self.token
-        url = self.base_path + self.group_groups_path + self.id + '/groups'
-        r = requests.get(url,headers=self.header)
+        url = BASE_PATH + GROUP_GROUPS_PATH + self.id + '/groups'
+        r = get(url=url,headers=self.header)
         return r.json()
 
     def groups_public(self):
         """获取公开组织列表"""
-        url = self.base_path + self.group_groups_public_path
-        r = requests.get(url,headers=self.header)
+        url = BASE_PATH + GROUP_GROUPS_PUBLIC_PATH
+        r = get(url=url,headers=self.header)
         return r.json()
 
     def create(self,name,login,description=None):
@@ -194,9 +142,8 @@ class Group():
             'login': login,
             'description': description
         }
-        self.header['X-Auth-Token'] = self.token
-        url = self.base_path + self.group_create_path
-        r = requests.post(url,headers=self.header,params=params)
+        url = BASE_PATH + GROUP_CREATE_PATH
+        r = post(url=url,headers=self.header,params=params)
         return r.json()
 
     def detail(self,groupid):
@@ -205,8 +152,8 @@ class Group():
         :param groupid: 组织的login或id
         """
 
-        url = self.base_path + self.group_detail_path + groupid
-        r = requests.get(url,headers=self.header)
+        url = BASE_PATH + GROUP_DETAIL_PATH + groupid
+        r = get(url=url,headers=self.header)
         return r.json()
 
     def update(self,groupid,name=None,login=None,description=None):
@@ -222,9 +169,8 @@ class Group():
             'login': login,
             'description': description
         }
-        self.header['X-Auth-Token'] = self.token
-        url = self.base_path + self.group_update_path + groupid
-        r = requests.put(url,headers=self.header,params=params)
+        url = BASE_PATH + GROUP_UPDATE_PATH + groupid
+        r = put(url=url,headers=self.header,params=params)
         return r.json()
 
     def delete(self,groupid):
@@ -232,9 +178,8 @@ class Group():
 
         :param groupid: 组织的login或id
         """
-        self.header['X-Auth-Token'] = self.token
-        url = self.base_path + self.group_delete_path + groupid
-        r = requests.delete(url,headers=self.header)
+        url = BASE_PATH + GROUP_DELETE_PATH + groupid
+        r = delete(url=url,headers=self.header)
         return r.json()
 
     def users(self,groupid):
@@ -242,9 +187,8 @@ class Group():
 
         :param groupid: 组织的login或id
         """
-        self.header['X-Auth-Token'] = self.token
-        url = self.base_path + self.group_users_path + groupid + '/users'
-        r = requests.get(url,headers=self.header)
+        url = BASE_PATH + GROUP_USERS_PATH + groupid + '/users'
+        r = get(url=url,headers=self.header)
         return r.json()
 
     def update_user(self,groupid,login,role):
@@ -257,9 +201,8 @@ class Group():
         params = {
             'role': role
         }
-        self.header['X-Auth-Token'] = self.token
-        url = self.base_path + self.group_update_user_path + groupid + '/users/' + login
-        r = requests.put(url,headers=self.header,params=params)
+        url = BASE_PATH + GROUP_UPDATE_USER_PATH + groupid + '/users/' + login
+        r = put(url=url,headers=self.header,params=params)
         return r.json()
 
     def delete_user(self,groupid,login):
@@ -268,60 +211,28 @@ class Group():
         :param groupid: 组织的login或id
         :param login: 用户的login
         """
-        self.header['X-Auth-Token'] = self.token
-        url = self.base_path + self.group_delete_user_path + groupid + '/users/' + login
-        r = requests.delete(url,headers=self.header)
+        url = BASE_PATH + GROUP_DELETE_USER_PATH + groupid + '/users/' + login
+        r = delete(url=url,headers=self.header)
         return r.json()
 
 class Repo():
     """获取仓库信息
     
     :params token: 用户token
-    :params base_path: 基本路径
-    :params repo_repos_user_path: 获取某个用户的仓库列表
-    :params repo_repos_group_path: 获取某个组织的仓库列表
-    :params repo_create_user_path: 往自己下面创建仓库
-    :params repo_create_group_path: 往组织创建仓库
-    :params repo_detail_path: 获取仓库详情
-    :params repo_update_path: 更新仓库信息
-    :params repo_delete_path: 删除仓库
-    :params repo_toc_path: 获取一个仓库的目录结构
-    :params repo_search_path: 基于关键字搜索仓库
     """
 
     def __init__(self,
-                token=None,
-                base_path=BASE_PATH, 
-                repo_repos_user_path=REPO_REPOS_USER_PATH,
-                repo_repos_group_path=REPO_REPOS_GROUP_PATH,
-                repo_create_user_path=REPO_CREATE_USER_PATH,
-                repo_create_group_path=REPO_CREATE_GROUP_PATH,
-                repo_detail_path=REPO_DETAIL_PATH,
-                repo_update_path=REPO_UPDATE_PATH,
-                repo_delete_path=REPO_DELETE_PATH,
-                repo_toc_path=REPO_TOC_PATH,
-                repo_search_path=REPO_SEARCH_PATH,
-                header=HEADER):
-        self.token = token
-        self.base_path = base_path
-        self.repo_repos_user_path = repo_repos_user_path
-        self.repo_repos_group_path = repo_repos_group_path
-        self.repo_create_user_path = repo_create_user_path
-        self.repo_create_group_path = repo_create_group_path
-        self.repo_detail_path = repo_detail_path
-        self.repo_update_path = repo_update_path
-        self.repo_delete_path = repo_delete_path
-        self.repo_toc_path = repo_toc_path
-        self.repo_search_path = repo_search_path
-        self.header = header
+                token=None,):
+        HEADER['X-Auth-Token'] = token
+        self.header = HEADER
 
     def repos_user(self,id):
         """获取某个用户的仓库列表
         
         :params id: 用户的login或id
         """
-        url = self.base_path + self.repo_repos_user_path + id + '/repos'
-        r = requests.get(url,headers=self.header)
+        url = BASE_PATH + REPO_REPOS_USER_PATH + id + '/repos'
+        r = get(url=url,headers=self.header)
         return r.json()
 
     def repos_group(self,groupid):
@@ -329,8 +240,8 @@ class Repo():
         
         :params groupid: 组织的login或id
         """
-        url = self.base_path + self.repo_repos_group_path + groupid +'/repos'
-        r = requests.get(url,headers=self.header)
+        url = BASE_PATH + REPO_REPOS_GROUP_PATH + groupid +'/repos'
+        r = get(url=url,headers=self.header)
         return r.json()
 
     def create(self,id,name=None,slug=None,description=None,public=None,type=None):
@@ -343,7 +254,6 @@ class Repo():
         :params public: 0 私密, 1 内网公开, 2 全网公开
         :params type: 类型，Book - 文档，Design - 画板
         """
-        self.header['X-Auth-Token'] = self.token
         params = {
             'name': name,
             'slug': slug,
@@ -351,8 +261,8 @@ class Repo():
             'public': int(public),
             'type': type
         }
-        url = self.base_path + self.repo_create_user_path + id + '/repos'
-        r = requests.post(url,headers=self.header,params=params)
+        url = BASE_PATH + REPO_CREATE_USER_PATH + id + '/repos'
+        r = post(url=url,headers=self.header,params=params)
         return r.json()
 
     def create_group(self,groupid=None,name=None,slug=None,description=None,public=None,type=None):
@@ -365,7 +275,6 @@ class Repo():
         :params public: 0 私密, 1 内网公开, 2 全网公开
         :params type: 类型，Book - 文档，Design - 画板
         """
-        self.header['X-Auth-Token'] = self.token
         params = {
             'name': name,
             'slug': slug,
@@ -373,8 +282,8 @@ class Repo():
             'public': int(public),
             'type': type
         }
-        url = self.base_path + self.repo_create_group_path + groupid + '/repos'
-        r = requests.post(url,headers=self.header,params=params)
+        url = BASE_PATH + REPO_CREATE_GROUP_PATH + groupid + '/repos'
+        r = post(url=url,headers=self.header,params=params)
         return r.json()
 
     def detail(self,id,type):
@@ -386,8 +295,8 @@ class Repo():
         params = {
             'type': type
         }
-        url = self.base_path + self.repo_detail_path + id
-        r = requests.get(url,headers=self.header,params=params)
+        url = BASE_PATH + REPO_DETAIL_PATH + id
+        r = get(url=url,headers=self.header,params=params)
         return r.json()
 
     def update(self,id=None,name=None,slug=None,toc=None,description=None,public=None):
@@ -400,7 +309,6 @@ class Repo():
         :params description: 说明
         :params public: 0 私密, 1 内网公开, 2 全网公开
         """
-        self.header['X-Auth-Token'] = self.token
         params = {
             'name': name,
             'slug': slug,
@@ -408,8 +316,8 @@ class Repo():
             'description': description,
             'public': public
         }
-        url = self.base_path + self.repo_update_path + id
-        r = requests.put(url,headers=self.header,params=params)
+        url = BASE_PATH + REPO_UPDATE_PATH + id
+        r = put(url=url,headers=self.header,params=params)
         return r.json()
 
     def delete(self,id):
@@ -417,9 +325,8 @@ class Repo():
         
         :params id: 仓库的namespace或id
         """
-        self.header['X-Auth-Token'] = self.token
-        url = self.base_path + self.repo_delete_path + id
-        r = requests.delete(url,headers=self.header)
+        url = BASE_PATH + REPO_DELETE_PATH + id
+        r = delete(url=url,headers=self.header)
         return r.json()
 
     def toc(self,id):
@@ -427,9 +334,8 @@ class Repo():
         
         :params id: 仓库的namespace或id
         """
-        self.header['X-Auth-Token'] = self.token
-        url = self.base_path + self.repo_toc_path + id + '/toc'
-        r = requests.get(url,headers=self.header)
+        url = BASE_PATH + REPO_TOC_PATH + id + '/toc'
+        r = get(url=url,headers=self.header)
         return r.json()
 
     def search(self,keywords=None,type=None):
@@ -438,11 +344,10 @@ class Repo():
         :params: keywords: :仓库模糊搜索的关键词
         :params: type: 类型，Book - 文档，Design - 画板
         """
-        self.header['X-Auth-Token'] = self.token
         params = {
             'q': keywords,
             'type': type
         }
-        url = self.base_path + self.repo_search_path
-        r = requests.get(url,headers=self.header,params=params)
+        url = BASE_PATH + REPO_SEARCH_PATH
+        r = get(url=url,headers=self.header,params=params)
         return r.json()
