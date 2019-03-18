@@ -55,9 +55,7 @@ class User():
     :param id: 用户的 login 或 id
     """
 
-    def __init__(self,
-                token=None,
-                id=None):
+    def __init__(self,token=None,id=None):
         HEADER['X-Auth-Token'] = token
         self.id = id
         self.header = HEADER
@@ -111,9 +109,7 @@ class Group():
     :param id: 用户的 login 或 id
     """
 
-    def __init__(self,
-                token=None,
-                id=None):
+    def __init__(self,token=None,id=None):
         HEADER['X-Auth-Token'] = token
         self.id = id
         self.header = HEADER
@@ -221,8 +217,7 @@ class Repo():
     :params token: 用户token
     """
 
-    def __init__(self,
-                token=None,):
+    def __init__(self,token=None):
         HEADER['X-Auth-Token'] = token
         self.header = HEADER
 
