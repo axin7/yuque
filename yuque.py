@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-
 from functools import partial
 
 import requests
-
 
 # 基本路径
 BASE_PATH = 'https://www.yuque.com/api/v2'    
@@ -11,8 +8,6 @@ BASE_PATH = 'https://www.yuque.com/api/v2'
 # 用户路径
 USER_INFO_PATH = '/users/'      # 获取单个用户信息   注：需在最后加 用户id或login      
 USER_INFO_AUTH_PATH = '/user'   # 获取认证的用户的个人信息                           
-USER_DOCS_PATH = '/user/docs'   # 获取用户创建的文档                                
-USER_RENCENT_UPDATED_PATH = '/user/recent-updated'     # 获取最近参与的文档/知识库   
 
 # 组织路径
 GROUP_GROUPS_PATH = '/users/'     # 获取某个用户的加入的组织列表  注：需在最后加 用户id/groups或login/groups
@@ -70,35 +65,6 @@ class User():
         """获取认证的用户的个人信息"""
         url = BASE_PATH + USER_INFO_AUTH_PATH
         r = get(url=url,headers=self.header)
-        return r.json()
-
-    def docs(self,keywords=None,offset=None):
-        """获取我创建的文档
-        
-        :param keywords: 文档标题模糊搜索的关键词
-        :param offset: 用于分页，效果类似 MySQL 的 limit offset，一页 20 条
-        """
-
-        params = {
-            'q': keywords,
-            'offset': offset
-        }
-        url = BASE_PATH + USER_DOCS_PATH
-        r = get(url=url,headers=self.header,params=params)
-        return r.json()
-
-    def recent_updated(self,type,offset=None):
-        """获取我最近参与的文档/知识库
-
-        :param type: 类型，Book - 文档，Design - 画板
-        :param offset: 用于分页，效果类似 MySQL 的 limit offset，一页 20 条
-        """
-        params = {
-            'type': type,
-            'offset': offset
-        }
-        url = BASE_PATH + USER_RENCENT_UPDATED_PATH
-        r = get(url=url, headers=self.header,params=params)
         return r.json()
     
 
@@ -210,6 +176,7 @@ class Group():
         url = BASE_PATH + GROUP_DELETE_USER_PATH + groupid + '/users/' + login
         r = delete(url=url,headers=self.header)
         return r.json()
+
 
 class Repo():
     """获取仓库信息
