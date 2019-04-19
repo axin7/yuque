@@ -31,6 +31,13 @@ REPO_DELETE_PATH = '/repos/'    # 删除仓库  注：需在最后加 仓库id�
 REPO_TOC_PATH = '/repos/'    # 获取一个仓库的目录结构  注：需在最后加 仓库namespace/toc或id/toc 
 REPO_SEARCH_PATH = '/search/repos'    # 基于关键字搜索仓库
 
+#文档路径
+DOC_DOCS_PATH = '/repos/'    # 获取某个仓库的文档列表  注：需在最后加 仓库namespace/docs或id/docs
+DOC_DETAIL_PATH = '/repos/'    # 获取单篇文档的详细信息 注：需在最后加 仓库namespace/docs/slug或repo_id/docs/id
+DOC_CREATE_PATH = '/repos/'    # 创建文档  注：需在最后加 仓库namespace/docs或id/docs
+DOC_UPDATE_PATH = '/repos/'    # 更新文档  注：需在最后加 仓库namespace/docs/id或repo_id/docs/id
+DOC_DELETE_PATH = '/repos/'    # 删除文档  注：需在最后加 仓库namespace/docs/id或repo_id/docs/id
+
 # 请求头
 HEADER = {
     'Content-Type' : 'application/x-www-form-urlencoded',
@@ -303,7 +310,7 @@ class Repo():
     def search(self,keywords=None,type=None):
         """基于关键字搜索仓库
         
-        :param keywords: :仓库模糊搜索的关键词
+        :param keywords: 仓库模糊搜索的关键词
         :param type: 类型，Book - 文档，Design - 画板
         """
         params = {
@@ -312,4 +319,79 @@ class Repo():
         }
         url = BASE_PATH + REPO_SEARCH_PATH
         r = get(url=url,headers=self.header,params=params)
+        return r.json()
+
+class Doc():
+    """获取文档信息
+
+    :param token: 用户token
+    :param name: 仓库的 namespace或id
+    """
+
+    def __init__(self,token,name):
+        HEADER['X-Auth-Token'] = token
+        self.name = name
+        self.header = HEADER
+
+    def docs(self):
+        """获取一个仓库的文档列表"""
+        url = BASE_PATH + DOC_DOCS_PATH + self.name + '/docs'
+        r = get(url=url,headers=self.header)
+        return r.json()
+
+    def detail(self,id):
+        """获取单篇文档的详细信息
+
+        :param id: 文档的 id或slug
+        """
+        url = BASE_PATH + DOC_DETAIL_PATH + self.name + '/docs/' + id
+        r = get(url=url,headers=self.header)
+        return r.json()
+
+    def create(self,title=None,slug=None,public=None,format='markdown',body=None):
+        """创建文档
+
+        :param title: 标题
+        :param slug: 文档 slug
+        :param public: 0 - 私密，1 - 公开
+        :param format: 支持 markdown 和 lake，默认为 markdown
+        :param body: format 描述的正文内容，最大允许 5MB
+        """
+        params = {
+            'title': title,
+            'slug': slug,
+            'public': public,
+            'format': format,
+            'body': body
+        }
+        url = BASE_PATH + DOC_CREATE_PATH + self.name + '/docs'
+        r = post(url=url,headers=self.header,params=params)
+        return r.json()
+
+    def update(self,id,title=None,slug=None,public=None,body=None):
+        """更新文档
+
+        :param id: 文档的 id   不是 slug ！
+        :param title: 标题
+        :param slug: 文档 slug
+        :param public: 0 - 私密，1 - 公开
+        :param body: 描述的正文内容
+        """
+        params = {
+            'title': title,
+            'slug': slug,
+            'public': public,
+            'body': body
+        }
+        url = BASE_PATH + DOC_UPDATE_PATH + self.name + '/docs/' + id
+        r = put(url=url,headers=self.header,params=params)
+        return r.json()
+
+    def delete(self,id):
+        """删除文档
+
+        :param id: 文档的 id   不是 slug ！
+        """
+        url = BASE_PATH + DOC_DELETE_PATH + self.name + '/docs/' + id
+        r = delete(url=url,headers=self.header)
         return r.json()
