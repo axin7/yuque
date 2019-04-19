@@ -328,7 +328,7 @@ class Doc():
     :param name: 仓库的 namespace或id
     """
 
-    def __init__(self,token,name):
+    def __init__(self,name,token=None):
         HEADER['X-Auth-Token'] = token
         self.name = name
         self.header = HEADER
