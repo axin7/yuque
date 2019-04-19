@@ -181,7 +181,7 @@ class Group():
 class Repo():
     """获取仓库信息
     
-    :params token: 用户token
+    :param token: 用户token
     """
 
     def __init__(self,token=None):
@@ -191,7 +191,7 @@ class Repo():
     def repos_user(self,id):
         """获取某个用户的仓库列表
         
-        :params id: 用户的login或id
+        :param id: 用户的login或id
         """
         url = BASE_PATH + REPO_REPOS_USER_PATH + id + '/repos'
         r = get(url=url,headers=self.header)
@@ -200,7 +200,7 @@ class Repo():
     def repos_group(self,groupid):
         """获取某个组织的仓库列表
         
-        :params groupid: 组织的login或id
+        :param groupid: 组织的login或id
         """
         url = BASE_PATH + REPO_REPOS_GROUP_PATH + groupid +'/repos'
         r = get(url=url,headers=self.header)
@@ -209,12 +209,12 @@ class Repo():
     def create(self,id,name=None,slug=None,description=None,public=None,type=None):
         """往自己下面创建仓库
         
-        :params id: 用户的login或id
-        :params name: 仓库名称
-        :params slug: slug
-        :params description: 说明
-        :params public: 0 私密, 1 内网公开, 2 全网公开
-        :params type: 类型，Book - 文档，Design - 画板
+        :param id: 用户的login或id
+        :param name: 仓库名称
+        :param slug: slug
+        :param description: 说明
+        :param public: 0 私密, 1 内网公开, 2 全网公开
+        :param type: 类型，Book - 文档，Design - 画板
         """
         params = {
             'name': name,
@@ -230,12 +230,12 @@ class Repo():
     def create_group(self,groupid=None,name=None,slug=None,description=None,public=None,type=None):
         """往组织创建仓库
         
-        :params groupid: 组织的login或id
-        :params name: 仓库名称
-        :params slug: slug
-        :params description: 说明
-        :params public: 0 私密, 1 内网公开, 2 全网公开
-        :params type: 类型，Book - 文档，Design - 画板
+        :param groupid: 组织的login或id
+        :param name: 仓库名称
+        :param slug: slug
+        :param description: 说明
+        :param public: 0 私密, 1 内网公开, 2 全网公开
+        :param type: 类型，Book - 文档，Design - 画板
         """
         params = {
             'name': name,
@@ -251,8 +251,8 @@ class Repo():
     def detail(self,id,type):
         """获取仓库详情
         
-        :params id: 仓库的namespace或id
-        :params type: 类型，Book - 文档，Design - 画板
+        :param id: 仓库的namespace或id
+        :param type: 类型，Book - 文档，Design - 画板
         """
         params = {
             'type': type
@@ -264,12 +264,12 @@ class Repo():
     def update(self,id=None,name=None,slug=None,toc=None,description=None,public=None):
         """更新仓库信息
         
-        :params id: 仓库的namespace或id
-        :params name: 仓库名称
-        :params slug: slug
-        :params toc: 更新文档仓库的目录信息
-        :params description: 说明
-        :params public: 0 私密, 1 内网公开, 2 全网公开
+        :param id: 仓库的namespace或id
+        :param name: 仓库名称
+        :param slug: slug
+        :param toc: 更新文档仓库的目录信息
+        :param description: 说明
+        :param public: 0 私密, 1 内网公开, 2 全网公开
         """
         params = {
             'name': name,
@@ -285,7 +285,7 @@ class Repo():
     def delete(self,id):
         """删除仓库
         
-        :params id: 仓库的namespace或id
+        :param id: 仓库的namespace或id
         """
         url = BASE_PATH + REPO_DELETE_PATH + id
         r = delete(url=url,headers=self.header)
@@ -294,7 +294,7 @@ class Repo():
     def toc(self,id):
         """获取一个仓库的目录结构
         
-        :params id: 仓库的namespace或id
+        :param id: 仓库的namespace或id
         """
         url = BASE_PATH + REPO_TOC_PATH + id + '/toc'
         r = get(url=url,headers=self.header)
@@ -303,8 +303,8 @@ class Repo():
     def search(self,keywords=None,type=None):
         """基于关键字搜索仓库
         
-        :params: keywords: :仓库模糊搜索的关键词
-        :params: type: 类型，Book - 文档，Design - 画板
+        :param keywords: :仓库模糊搜索的关键词
+        :param type: 类型，Book - 文档，Design - 画板
         """
         params = {
             'q': keywords,
