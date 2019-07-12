@@ -11,12 +11,12 @@ class User(Base):
     def info(self):
         """获取单个用户信息"""
         url = self._baseUrl + self._userInfoUrl + self.id
-        r = self.get(url=url)
+        r = self._get(url=url)
         return r.json()
             
     def info_auth(self):
         """获取认证用户的个人信息"""
         url = self._baseUrl + self._userInfoAuthUrl
-        r = self.get(url=url)
+        r = self._get(url=url)
         return r.json()
 

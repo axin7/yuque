@@ -19,10 +19,10 @@ class Base(object):
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.46 Safari/537.36'
     }
 
-    get = partial(requests.get,headers=_headers)
-    post = partial(requests.post,headers=_headers)
-    put = partial(requests.put,headers=_headers)
-    delete = partial(requests.delete,headers=_headers)
+    _get = partial(requests.get,headers=_headers)
+    _post = partial(requests.post,headers=_headers)
+    _put = partial(requests.put,headers=_headers)
+    _delete = partial(requests.delete,headers=_headers)
 
     def __init__(self,token=None,id=None,name=None):
         if token:
