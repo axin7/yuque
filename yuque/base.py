@@ -14,15 +14,15 @@ class Base(object):
     _baseUrl = 'https://www.yuque.com/api/v2'    
 
     def __init__(self,token=None,id=None,namespace=None):
-        self.id = id.strip()
-        self.namespace = namespace.strip()
+        self.id = id
+        self.namespace = namespace
         self._headers = {
             'Content-Type' : 'application/x-www-form-urlencoded',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.46 Safari/537.36'
         }
 
         if token:
-            self._headers.update({'X-Auth-Token':token.strip()})
+            self._headers.update({'X-Auth-Token':token})
 
         self._get = partial(requests.get,headers=self._headers)
         self._post = partial(requests.post,headers=self._headers)
